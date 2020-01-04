@@ -19,6 +19,9 @@ mapping:
         type: str
         enum: ['iteration', 'complete']
         required: True
+      workdir:
+        type: str
+        required: True
   ansible:
     required: True
     type: map

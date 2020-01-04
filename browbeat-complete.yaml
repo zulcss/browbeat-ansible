@@ -3,6 +3,7 @@ browbeat:
   cloud_name: openstack
   rerun: 3
   rerun_type: iteration
+  workdir: ~/workbench-results
 ansible:
   hosts: ansible/hosts
   metadata_playbook: ansible/gather/stockpile.yml
