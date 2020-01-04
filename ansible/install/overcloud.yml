@@ -1,4 +1,4 @@
 ---
-- hosts: tester
+- hosts: browbeat
   roles:
     - overcloud
