@@ -1,0 +1,5 @@
+---
+- hosts: browbeat
+  tasks:
+    - debug:
+        msg: "hello world"

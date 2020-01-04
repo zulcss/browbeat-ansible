@@ -7,7 +7,7 @@ browbeat:
   # complete reruns after all workloads complete
   # rerun_type: complete
   rerun_type: iteration
-  workdir: ~/workbench-results
+  workdir: ~/browbeat-results
 ansible:
   hosts: ansible/hosts
   metadata_playbook: ansible/gather/stockpile.yml

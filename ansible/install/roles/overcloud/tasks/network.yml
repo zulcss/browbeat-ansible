@@ -1,0 +1,73 @@
+---
+- name: Get default gateway interface
+  shell: |
+    ip r | grep default | sed -n 's/.* dev \([[:alnum:]]*\) .*/\1/p'
+  register: default_interface
+
+- name: Setup iptables rules
+  shell: |
+    iptables -t nat -A POSTROUTING -o {{ default_interface.stdout }} -j MASQUERADE
+    iptables -I FORWARD -j ACCEPT
+  become: yes
+
+- name: check the deployment network configuratoin file
+  find:
+      paths: "{{ template_base }}"
+      patterns: "{{ network_environment_file }}"
+      recurse: yes
+  register: network_environment_file_path
+
+- name: read deployment network configuration
+  command: cat {{ network_environment_file_path.files[0].path }}
+  register: network_template_out
+  when: network_environment_file_path.matched > 0
+  changed_when: false
+
+- name: load deployment configuration as yaml
+  set_fact:
+      network_template: "{{ network_template_out.stdout | from_yaml }}"
+  when: network_environment_file_path.matched > 0
+
+- name: setup network
+  block:
+      - name: Setup public network (flat)
+        shell: |
+            source ~/overcloudrc
+            openstack network create --share --external --provider-network-type "{{ network.type }}" \
+                --provider-physical-network "{{ physnet_name }}" "{{ network.public_network }}"
+        when: network.type == 'flat'
+
+      - name: Setup public network (vlan)
+        shell: |
+            source ~/overcloudrc
+            openstack network create --share --external --provider-network-type "{{ network.type }}" \
+              --provider-segment "{{ network_template.parameter_defaults.ExternalNetworkVlanID }}" \
+              --provider-physical-network "{{ physnet_name }}" "{{ network.public_network }}"
+        when: network.type == 'vlan'
+
+      - name: Setup public subnet
+        shell: |
+          source ~/overcloudrc
+          openstack subnet create --network public --subnet-range "{{ network_template.parameter_defaults.ExternalNetCidr }}" \
+               --no-dhcp "{{ network.public_subnet }}"
+
+      - name: Setup private network and subnet
+        shell: |
+          source ~/overcloudrc
+          openstack network create --share --provider-network-type geneve "{{ network.private_network }}"
+          openstack subnet create "{{ network.private_subnet }}" --subnet-range "{{ network.private_cidr }}" --network \
+            "{{ network.private_network }}"
+
+      - name: Setup router
+        shell: |
+          source ~/overcloudrc
+          openstack router create default-router
+          openstack router add subnet default-router "{{ network.private_subnet }}"
+          openstack router set --external-gateway "{{ network.public_network }}" default-router
+
+      - name: Setup dns
+        shell: |
+          source ~/overcloudrc
+          openstack subnet set --dns-nameserver "{{ network.dns_server }}" "{{ network.public_subnet }}"
+          openstack subnet set --dns-nameserver "{{ network.dns_server }}" "{{ network.private_subnet }}"
+

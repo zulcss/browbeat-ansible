@@ -11,6 +11,7 @@
 #   limitations under the License.
 
 from browbeat.api import logger
+from browbeat.api.path import ansible_path
 from browbeat.workloads import base
 
 LOG = logger.LOG
@@ -23,6 +24,9 @@ class Rally(base.WorkloadBase):
         self.tools = tools
         self.workdir = workdir
         self.result_dir_ts = result_dir_ts
+
+        self.playbook = os.path.join(ansible_path, 'playbooks', 'rally-workload.yml')
+    
 
     def run_workload(self, workload, run_iteration):
         LOG.info("Running Rally workload: {}".format(workload["name"]))

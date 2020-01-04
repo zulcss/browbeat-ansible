@@ -1,0 +1,27 @@
+---
+- name: Create admin secutiry group
+  os_security_group:
+     validate_certs: no
+     cloud: "{{ name }}"
+     state: present
+     name: "{{ security_group }}"
+
+- name: Allow any ICMP
+  os_security_group_rule:
+    validate_certs: no
+    cloud: "{{ name }}"
+    security_group: "{{ security_group }}"
+    protocol: icmp
+    remote_ip_prefix: 0.0.0.0/0
+    port_range_min: -1
+    port_range_max: -1
+
+- name: Allow any SSH connection
+  os_security_group_rule:
+    validate_certs: no
+    cloud: "{{ name }}"
+    security_group: "{{ security_group }}"
+    protocol: tcp
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: 0.0.0.0/0

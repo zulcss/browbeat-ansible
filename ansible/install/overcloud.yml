@@ -1,0 +1,4 @@
+---
+- hosts: tester
+  roles:
+    - overcloud

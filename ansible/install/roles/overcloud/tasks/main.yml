@@ -1,0 +1,6 @@
+---
+- include_tasks: flavors.yml
+- include_tasks: images.yml
+- include_tasks: keypair.yml
+- include_tasks: security-group.yml
+- include_tasks: network.yml

@@ -18,3 +18,6 @@ LOG = logger.LOG
 
 conf_schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                 '..', 'schema')
+ansible_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                '..', 'ansible')
+

@@ -7,3 +7,5 @@ colorlog
 pykwalify
 pathlib
 stevedore
+ansible
+ansible_runner

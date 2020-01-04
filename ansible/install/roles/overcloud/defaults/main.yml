@@ -1,0 +1,4 @@
+---
+network_environment_file: "network-environment.yaml"
+physnet_name: datacentre
+template_base: "{{ ansible_user_dir}}"

@@ -1,0 +1,8 @@
+---
+- name: create keypair
+  os_keypair:
+     validate_certs: no
+     cloud: "{{ name }}"
+     state: present
+     name: "{{ keypair_name }}"
+     public_key_file: "/home/stack/.ssh/authorized_keys"
