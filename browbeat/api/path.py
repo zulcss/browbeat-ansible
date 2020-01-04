@@ -10,17 +10,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+import os
 
-from browbeat.api import config
 from browbeat.api import logger
 
 LOG = logger.LOG
 
-
-class Browbeat(object):
-    def __init__(self, args):
-        self.args = args
-        self.config = config.load_browbeat_config(self.args.config)
-
-    def run(self):
-        LOG.info('Running browbeat ...')
+conf_schema_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                '..', 'schema')

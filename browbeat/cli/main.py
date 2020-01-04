@@ -64,6 +64,8 @@ class BrowbeatShell(object):
     def main(self, argv):
         parsed_args = self.parsed_args(argv)
 
+        logging.getLogger('pykwalify').setLevel(logging.WARNING)
+
         LOG.debug("CLI Args: {}".format(parsed_args))
 
         runner.Browbeat(parsed_args).run()
